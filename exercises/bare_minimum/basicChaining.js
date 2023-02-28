@@ -8,13 +8,21 @@
  * HINT: We exported some similar promise-returning functions in previous exercises
  */
 
-var fs = require('fs');
+
 var Promise = require('bluebird');
-
-
-
+var fs = Promise.promisifyAll(require('fs'));
+var { pluckFirstLineFromFileAsync } = require('./promiseConstructor.js');
+var { getGitHubProfileAsync} = require('./promisification.js');
 var fetchProfileAndWriteToFile = function(readFilePath, writeFilePath) {
   // TODO
+  return pluckFirstLineFromFileAsync(readFilePath)
+    .then(function(user) {
+      return getGitHubProfileAsync(user);
+    })
+    .then(function(profile) {
+      return fs.writeFileAsync(writeFilePath, JSON.stringify(profile));
+      // somehow write to file ??
+    });
 };
 
 // Export these functions so we can test them
